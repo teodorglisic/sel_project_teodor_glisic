@@ -17,7 +17,7 @@ public class DijkstraSearch {
 
         adjacencyList = data.getAdjacencyList();
         long start = System.nanoTime();
-        List<String> path = dijkstraSearch("D", "Z");
+        List<String> path = dijkstraSearch("F", "G");
         long end = System.nanoTime();
         System.out.println("Duration: " + ((double)(end - start) / 1000000000) + " seconds");
         printPath(path);

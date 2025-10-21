@@ -1,6 +1,8 @@
 package p1_navigation;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -17,10 +19,10 @@ import java.util.Map;
  * easy to understand and use.
  */
 public class MapData {
-    private static final String EdgeFile = "C:\\Users\\Teodor\\IdeaProjects\\sel_projects_teodor_glisic\\project_sel_glisic_teodor\\src\\navigation\\Edges_Correct.csv";
-    private static final String NodeFile = "C:\\Users\\Teodor\\IdeaProjects\\sel_projects_teodor_glisic\\project_sel_glisic_teodor\\src\\navigation\\Nodes_Correct.csv";
     private static final Map<String, ArrayList<Destination>> adjacencyList = new HashMap<>();
     private static final Map<String, GPS> nodes = new HashMap<>();
+    private final URL edgeFileResource = this.getClass().getResource("resources/Edges_Correct.csv");
+    private final URL nodeFileResource = this.getClass().getResource("resources/Nodes_Correct.csv");
 
     /**
      * Simple class for GPS coordinates
@@ -55,18 +57,22 @@ public class MapData {
     }
 
     private void createNodes() throws Exception {
-        File file = new File(NodeFile); // See Readme.txt !!!
-        Files.lines(Paths.get(file.toURI())).map(line -> line.split(";")).forEach(a -> nodes.put(a[0], new GPS(Integer.parseInt(a[1]), Integer.parseInt(a[2]))));
-    }
+            if (nodeFileResource != null) {
+                File nodeFile = new File(nodeFileResource.getFile());
+                Files.lines(Paths.get(nodeFile.toURI())).map(line -> line.split(";")).forEach(a -> nodes.put(a[0], new GPS(Integer.parseInt(a[1]), Integer.parseInt(a[2]))));
+            }
+        }
 
     private void createAdjacencyList() throws Exception {
-        File file = new File(EdgeFile); // See Readme.txt !!!
-        Files.lines(Paths.get(file.toURI())).map(line -> line.split(";")).forEach(
-                a -> {
-                    addDestination(a[0], a[1], a[2]);
-                    addDestination(a[1], a[0], a[2]);
-                }
-        );
+        if (edgeFileResource != null) {
+            File edgeFile = new File(edgeFileResource.getFile());
+            Files.lines(Paths.get(edgeFile.toURI())).map(line -> line.split(";")).forEach(
+                    a -> {
+                        addDestination(a[0], a[1], a[2]);
+                        addDestination(a[1], a[0], a[2]);
+                    }
+            );
+        }
     }
 
     private void addDestination(String from, String to, String dist) {
